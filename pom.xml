@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>com.jtspringproject</groupId>
 	<artifactId>JtSpringProject</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.3-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>JtSpringProject</name>
 	<description>Spring project for Java Technology</description>
