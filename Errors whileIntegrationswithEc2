@@ -1,0 +1,131 @@
+WebActions ..inatallations: cmmds:
+Error1::
+ash: shasum: command not found
+[ec2-user@ip-10-0-81-149 actions-runner]$ ./config.sh --url https://github.com/Shilgithub/E-commerce --token BAWYNIBN6DLBLPNXLLGQSH3IM6NQI
+Libicu's dependencies is missing for Dotnet Core 6.0
+Execute sudo ./bin/installdependencies.sh to install any missing Dotnet Core 6.0 dependencies.
+[ec2-user@ip-10-0-81-149 actions-runner]$
+
+solutions:
+✅ 1. shasum: command not found
+This error is harmless during extraction but can be fixed by installing perl-Digest-SHA (which provides shasum) on Amazon Linux:
+sudo yum install -y perl-Digest-SHA
+
+✅ 2. Libicu's dependencies are missing for .NET 6
+The runner needs libicu for .NET Core 6. You can fix this by running the recommended script: 
+
+sudo ./bin/installdependencies.sh
+
+🚀 Final Steps to Register the Runner
+Once dependencies are installed, re-run the config.sh command:
+./config.sh --url https://github.com/Shilgithub/E-commerce --token BAWYNIBN6DLBLPNXLLGQSH3IM6NQI
+./run.sh
+
+Or if you want to install it as a service (recommended):
+sudo ./svc.sh install
+sudo ./svc.sh start
+
+
+Error2: --------OS Information--------
+NAME="Amazon Linux"
+VERSION="2023"
+ID="amzn"
+ID_LIKE="fedora"
+VERSION_ID="2023"
+PLATFORM_ID="platform:al2023"
+PRETTY_NAME="Amazon Linux 2023.7.20250623"
+ANSI_COLOR="0;33"
+CPE_NAME="cpe:2.3:o:amazon:amazon_linux:2023"
+HOME_URL="https://aws.amazon.com/linux/amazon-linux-2023/"
+DOCUMENTATION_URL="https://docs.aws.amazon.com/linux/"
+SUPPORT_URL="https://aws.amazon.com/premiumsupport/"
+BUG_REPORT_URL="https://github.com/amazonlinux/amazon-linux-2023"
+VENDOR_NAME="AWS"
+VENDOR_URL="https://aws.amazon.com/"
+SUPPORT_END="2029-06-30"
+------------------------------
+"fedora"
+Can't detect current OS type based on /etc/os-release.
+Can't install dotnet core dependencies.
+You can manually install all required dependencies based on following documentation
+https://docs.microsoft.com/en-us/dotnet/core/linux-prerequisites?tabs=netcore2x
+
+
+solutions::
+
+You're using Amazon Linux 2023, which is not officially supported by Microsoft’s default `.NET Core install scripts**, and that’s why the GitHub Actions runner is failing to auto-install dependencies.
+
+✅ Fix: Manually Install .NET 6 Dependencies on Amazon Linux 2023
+You need to install the correct libraries manually. Here's the fix:
+
+🔧 Step-by-step:
+
+# Enable necessary repositories
+sudo dnf install -y dnf-plugins-core
+
+# Install required dependencies for .NET 6
+sudo dnf install -y \
+  icu \
+  krb5-libs \
+  libcurl \
+  libunwind \
+  zlib \
+  libuuid \
+  lttng-ust \
+  openssl \
+  curl \
+  gettext \
+  libstdc++ \
+  libgcc \
+  glibc
+
+✅ Optional: Install shasum (if still needed)
+
+sudo dnf install -y perl-Digest-SHA
+
+📌 Then Continue
+After installing the dependencies:
+
+./config.sh --url https://github.com/Shilgithub/E-commerce --token <your_token_here>
+
+./run.sh
+
+Error 3: 
+Complete!
+[ec2-user@ip-10-0-81-149 actions-runner]$ ./config.sh --url https://github.com/Shilgithub/E-commerce --token BAWYNIBN6DLBLPNXLLGQSH3IM6NQI
+Libicu's dependencies is missing for Dotnet Core 6.0
+Execute sudo ./bin/installdependencies.sh to install any missing Dotnet Core 6.0 dependencies.
+[ec2-user@ip-10-0-81-149 actions-runner]$
+
+✅ Let's confirm and fix it cleanly:
+🔍 1. Check if ICU is properly installed
+Run this to confirm: 
+ldd ./bin/Runner.Listener | grep icu
+
+✅ 2. Install ICU for .NET 6 manually (again)
+Amazon Linux 2023 might need ICU from EPEL/Fedora-style repos.
+
+Try:  sudo dnf install -y libicu
+And to be extra sure:
+
+bash
+Copy
+Edit
+sudo dnf provides */libicu*.so
+
+ldconfig -p | grep icu
+...u get output here
+
+🔄 3. Re-run config.sh
+
+./config.sh --url https://github.com/Shilgithub/E-commerce --token BAWYNIBN6DLBLPNXLLGQSH3IM6NQI
+
+🛠️ If it's still failing
+Try to force set ICU path:
+
+bash
+Copy
+Edit
+export LD_LIBRARY_PATH=/usr/lib64:$LD_LIBRARY_PATH
+./config.sh --url https://github.com/Shilgithub/E-commerce --token BAWYNIBN6DLBLPNXLLGQSH3IM6NQI
+
